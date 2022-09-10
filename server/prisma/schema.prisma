@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MODERATOR
+  USER
+}
+
+enum Status {
+  OFFLINE
+  ONLINE
+  BANNED
+}
+
+// Social Network
+
+model User {
+  id            String         @id @default(cuid())
+  firstName     String
+  lastName      String
+  username      String         @unique
+  email         String         @unique
+  isVerified    Boolean        @default(false)
+  passwordHash  String
+  role          Role           @default(USER)
+  status        Status         @default(OFFLINE)
+  avatarUrl     String?
+  country       String?
+  gender        String?
+  followers     Follows[]      @relation("follower")
+  following     Follows[]      @relation("following")
+  posts         Post[]         @relation("author")
+  likes         Post[]
+  conversations Conversation[]
+  messages      Message[]
+  products      Product[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Follows {
+  follower     User   @relation("follower", fields: [follower_id], references: [id])
+  follower_id  String
+  following    User   @relation("following", fields: [following_id], references: [id])
+  following_id String
+
+  @@id([follower_id, following_id])
+}
+
+model Post {
+  id         Int      @id @default(autoincrement())
+  title      String
+  contentUrl String
+  authorId   String
+  author     User     @relation("author", fields: [authorId], references: [id])
+  likedBy    User[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Conversation {
+  id           String    @id @default(cuid())
+  name         String
+  messages     Message[]
+  participants User[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  text           String?
+  contentUrl     String?
+  author         User         @relation(fields: [authorId], references: [id])
+  authorId       String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+// model Complaint {
+//   id           String   @id @default(cuid())
+//   violation    String
+//   contentUrl   String?
+//   userUrl      String?
+//   appellantUrl String
+//   createdAt    DateTime @default(now())
+//   updatedAt    DateTime @updatedAt
+// }
+
+//TODO Заявка, категории, валюта
+// Marketplace
+
+model Category {
+  id                String     @id @default(cuid())
+  title             String
+  generalCategoryId String
+  generalCategory   Category   @relation("subcategories", fields: [generalCategoryId], references: [id])
+  subcategories     Category[] @relation("subcategories")
+  productId         String?
+  product           Product?   @relation(fields: [productId], references: [id])
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model Product {
+  id          String     @id @default(cuid())
+  title       String
+  description String
+  owner       User       @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  categories  Category[]
+  price       Float
+  amount      Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
