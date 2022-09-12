@@ -21,7 +21,6 @@ import { APP_GUARD } from '@nestjs/core';
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
-      context: ({req})=>({req}),
       cors: { origin: true, credentials: true },
     }),
     PrismaModule,
