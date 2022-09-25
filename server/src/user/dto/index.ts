@@ -1,1 +1,1 @@
-export * from './userInfo.response'
+export * from './user-info.response';

@@ -25,28 +25,27 @@ enum Status {
 // Social Network
 
 model User {
-  id                 String         @id @default(cuid())
-  firstName          String
-  lastName           String
-  username           String         @unique
-  email              String         @unique
-  isVerified         Boolean        @default(false)
-  passwordHash       String
-  hashedRefreshToken String?
-  role               Role           @default(USER)
-  status             Status         @default(OFFLINE)
-  avatarUrl          String?
-  country            String?
-  gender             String?
-  followers          Follows[]      @relation("follower")
-  following          Follows[]      @relation("following")
-  posts              Post[]         @relation("author")
-  likes              Post[]
-  conversations      Conversation[]
-  messages           Message[]
-  products           Product[]
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  id            String         @id @default(cuid())
+  firstName     String
+  lastName      String
+  username      String         @unique
+  email         String         @unique
+  isVerified    Boolean        @default(false)
+  passwordHash  String
+  role          Role           @default(USER)
+  status        Status         @default(OFFLINE)
+  avatarUrl     String?
+  country       String?
+  gender        String?
+  followers     Follows[]      @relation("follower")
+  following     Follows[]      @relation("following")
+  posts         Post[]         @relation("author")
+  likes         Post[]
+  conversations Conversation[]
+  messages      Message[]
+  products      Product[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
 model Follows {

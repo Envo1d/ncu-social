@@ -12,4 +12,9 @@ export class UserInfoResponse {
   @IsNotEmpty()
   @Field()
   email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  role: string;
 }

@@ -1,45 +1,62 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { AuthService } from './auth.service';
-//import { Auth } from './entities/auth.entity';
-import {
-  LogoutResponse,
-  SigninInput,
-  SignResponse,
-  SignupInput,
-  NewTokensResponse,
-} from './dto';
-import { CurrentUser, CurrentUserId, Public } from './decorators';
-import { UseGuards } from '@nestjs/common';
-import { RefreshTokenGuard } from './guards/refreshToken.guard';
+import { ConfigService } from '@nestjs/config'
+import { GqlContext } from './../types'
+import { Resolver, Mutation, Args, Context } from '@nestjs/graphql'
+import { AuthService } from './auth.service'
+import { RegisterInput, LoginInput, SignResponse } from './dto'
 
 @Resolver()
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+	constructor(
+		private readonly authService: AuthService,
+		private readonly config: ConfigService
+	) {}
 
-  @Public()
-  @Mutation(() => SignResponse)
-  signup(@Args('signupInput') signupInput: SignupInput) {
-    return this.authService.signup(signupInput);
-  }
+	@Mutation(() => SignResponse)
+	async register(
+		@Args('data') input: RegisterInput,
+		@Context() { res }: GqlContext
+	) {
+		const result = await this.authService.register(input)
+		res.cookie('refreshToken', result.refreshToken, {
+			maxAge:
+				this.config.get<number>('REFRESH_TOKEN_EXPIRY_DURATION_NUM_DAYS') *
+				24 *
+				60 *
+				60 *
+				1000,
+			httpOnly: true,
+		})
+		return result
+	}
 
-  @Public()
-  @Mutation(() => SignResponse)
-  signin(@Args('signinInput') signinInput: SigninInput) {
-    return this.authService.signin(signinInput);
-  }
+	@Mutation(() => SignResponse)
+	async getNewTokens(@Context() { req, res }: GqlContext) {
+		const refToken = req.cookies.refreshToken
+		const result = await this.authService.getNewTokens(refToken)
+		res.cookie('refreshToken', result.refreshToken, {
+			maxAge:
+				this.config.get<number>('REFRESH_TOKEN_EXPIRY_DURATION_NUM_DAYS') *
+				24 *
+				60 *
+				60 *
+				1000,
+			httpOnly: true,
+		})
+		return result
+	}
 
-  @Mutation(() => LogoutResponse)
-  logout(@Args('id', { type: () => String }) id: string) {
-    return this.authService.logout(id);
-  }
-
-  @Public()
-  @UseGuards(RefreshTokenGuard)
-  @Mutation(() => NewTokensResponse)
-  getNewTokens(
-    @CurrentUserId() userId: string,
-    @CurrentUser('refreshToken') refreshToken: string,
-  ) {
-    return this.authService.getNewTokens(userId, refreshToken);
-  }
+	@Mutation(() => SignResponse)
+	async login(@Args('data') input: LoginInput, @Context() { res }: GqlContext) {
+		const result = await this.authService.login(input)
+		res.cookie('refreshToken', result.refreshToken, {
+			maxAge:
+				this.config.get<number>('REFRESH_TOKEN_EXPIRY_DURATION_NUM_DAYS') *
+				24 *
+				60 *
+				60 *
+				1000,
+			httpOnly: true,
+		})
+		return result
+	}
 }

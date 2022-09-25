@@ -3,11 +3,16 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { IsNotEmpty, IsString } from 'class-validator'
 
 @ObjectType()
-export class SignResponse {
+export class SignResult {
 	@IsString()
 	@IsNotEmpty()
 	@Field()
 	accessToken: string
+
+	@IsString()
+	@IsNotEmpty()
+	@Field()
+	refreshToken: string
 
 	@Field(() => UserInfoResponse)
 	user: UserInfoResponse

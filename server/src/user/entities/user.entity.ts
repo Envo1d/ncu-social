@@ -1,25 +1,47 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { Role, Status } from '@prisma/client'
 
 @ObjectType()
 export class User {
-  @Field(() => ID)
-  id: string;
+	@Field(() => ID)
+	id: string
 
-  @Field()
-  username: string;
+	@Field(() => String)
+	username: string
 
-  @Field()
-  email: string;
+	@Field(() => String)
+	email: string
 
-  @Field()
-  passwordHash: string;
+	@Field(() => String)
+	isVerified: boolean
 
-  @Field()
-  firstName: string;
+	@Field(() => String)
+	passwordHash: string
 
-  @Field()
-  lastName: string;
+	@Field(() => String)
+	firstName: string
 
-  @Field()
-  country: string;
+	@Field(() => String)
+	lastName: string
+
+	@Field(() => String, { nullable: true })
+	country?: string
+
+	@Field(() => String)
+	role: Role
+
+	@Field(() => String)
+	status: Status
+
+	@Field(() => String, { nullable: true })
+	avatarUrl?: string
+
+	@Field(() => String, { nullable: true })
+	gender?: string
+
+	@Field(() => Date, { name: 'registeredAt' })
+	createdAt: Date
+
+	@Field(() => Date)
+	updatedAt: Date
 }
