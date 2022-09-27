@@ -1,6 +1,6 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo'
 import { CacheModule, Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { GraphQLModule } from '@nestjs/graphql'
 import { PrismaModule } from './prisma/prisma.module'
 import { join } from 'path'
@@ -8,6 +8,8 @@ import { UserModule } from './user/user.module'
 import type { ClientOpts } from 'ioredis'
 import { AuthModule } from './auth/auth.module'
 import * as redisStore from 'cache-manager-ioredis'
+import { MailerModule } from '@nestjs-modules/mailer'
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter'
 
 @Module({
 	imports: [
@@ -22,14 +24,40 @@ import * as redisStore from 'cache-manager-ioredis'
 			cors: { origin: true, credentials: true },
 			context: ({ req, res }) => ({ req, res }),
 		}),
-		// CacheModule.register<ClientOpts>({
-		// 	isGlobal: true,
-		// 	store: redisStore,
-		// 	host: 'redis',
-		// 	port: 6379,
-		// 	password: 'htlbcgfcc21',
-		// 	db: 0,
-		// }),
+		CacheModule.registerAsync<ClientOpts>({
+			isGlobal: true,
+			inject: [ConfigService],
+			useFactory: async (config: ConfigService) => ({
+				store: redisStore,
+				host: config.get<string>('REDIS_HOST'),
+				port: config.get<number>('REDIS_PORT'),
+				password: config.get<string>('REDIS_PASS'),
+				db: 0,
+			}),
+		}),
+		MailerModule.forRootAsync({
+			inject: [ConfigService],
+			useFactory: async (config: ConfigService) => ({
+				transport: {
+					host: config.get<string>('EMAIL_HOST'),
+					auth: {
+						user: config.get<string>('EMAIL_USER'),
+						pass: config.get<string>('EMAIL_PASS'),
+					},
+					port: config.get<number>('EMAIL_PORT'),
+					ignoreTLS: true,
+					secure: true,
+				},
+				template: {
+					dir: join(process.cwd(), 'src/mails'),
+					adapter: new HandlebarsAdapter(),
+					options: {
+						strict: true,
+					},
+				},
+				preview: false,
+			}),
+		}),
 		PrismaModule,
 		UserModule,
 		AuthModule,

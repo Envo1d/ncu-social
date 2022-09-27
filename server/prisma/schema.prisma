@@ -99,7 +99,6 @@ model Message {
 //   updatedAt    DateTime @updatedAt
 // }
 
-//TODO Заявка, категории, валюта
 // Marketplace
 
 model Category {

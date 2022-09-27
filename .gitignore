@@ -126,4 +126,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 server/prisma/migrations
-client-next
+todo.txt

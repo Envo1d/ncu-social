@@ -57,8 +57,6 @@ export class AuthService {
 				}
 			}
 		}
-
-		throw new HttpException('Forbidden', HttpStatus.FORBIDDEN)
 	}
 
 	async login(input: LoginInput): Promise<SignResult> {

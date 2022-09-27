@@ -22,22 +22,22 @@ services:
       - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
       - REDIS_REPLICATION_MODE=master
-  nest-api:
-    container_name: nest-api
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    ports:
-      - 7070:7070
-    depends_on:
-      - postgres
-      - redis
-    env_file:
-      - ./server/docker.env
+  # nest-api:
+  #   container_name: nest-api
+  #   build:
+  #     context: ./server
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 7070:7070
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #   env_file:
+  #     - ./server/docker.env
 volumes:
   postgres:
     driver: local
   redis:
     driver: local
-  nest:
-    driver: local
+  # nest:
+  #   driver: local
