@@ -4,8 +4,6 @@ import { LoginInput } from './dto/login.input'
 import { PrismaService } from './../prisma/prisma.service'
 import {
 	BadRequestException,
-	HttpException,
-	HttpStatus,
 	Injectable,
 	UnauthorizedException,
 } from '@nestjs/common'
@@ -31,8 +29,6 @@ export class AuthService {
 					email: input.email,
 					firstName: input.firstName,
 					lastName: input.lastName,
-					gender: input?.gender,
-					country: input?.country,
 					passwordHash: passHash,
 				},
 			})

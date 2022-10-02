@@ -33,6 +33,9 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 				port: config.get<number>('REDIS_PORT'),
 				password: config.get<string>('REDIS_PASS'),
 				db: 0,
+				retryStrategy: () => {
+					return 2000
+				},
 			}),
 		}),
 		MailerModule.forRootAsync({

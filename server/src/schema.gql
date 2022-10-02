@@ -16,19 +16,18 @@ type Mutation {
   getNewTokens: SignResponse!
   login(data: LoginInput!): SignResponse!
   register(data: RegisterInput!): SignResponse!
-  veryfiEmail(data: VerifyEmailInput!): Boolean!
+  verifyEmail(data: VerifyEmailInput!): Boolean!
 }
 
 type Query {
+  getAll: [User!]!
   profile: User!
   sendVerificationCode: Boolean!
 }
 
 input RegisterInput {
-  country: String!
   email: String!
   firstName: String!
-  gender: String!
   lastName: String!
   password: String!
   username: String!
@@ -36,6 +35,7 @@ input RegisterInput {
 
 type SignResponse {
   accessToken: String!
+  id: String!
   user: UserInfoResponse!
 }
 

@@ -19,6 +19,11 @@ export class UserService {
 		@Inject(CACHE_MANAGER) private readonly cache: Cache
 	) {}
 
+	async getAll() {
+		const users = await this.prisma.user.findMany()
+		return users
+	}
+
 	async getById(id: string) {
 		const user = await this.prisma.user.findUnique({
 			where: {
@@ -56,7 +61,7 @@ export class UserService {
 		return true
 	}
 
-	async veryfiEmail(input: VerifyEmailInput, userId: string) {
+	async verifyEmail(input: VerifyEmailInput, userId: string) {
 		const code = await this.cache.get(userId)
 		if (!code) throw new ForbiddenException('Verification code is not valid')
 		if (code === input.verifyCode) {
@@ -65,7 +70,6 @@ export class UserService {
 					id: userId,
 				},
 				data: {
-					verificationCode: null,
 					isVerified: true,
 				},
 			})

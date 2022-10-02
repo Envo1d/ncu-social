@@ -1,0 +1,7 @@
+query {
+	getAll {
+		id
+		username
+		email
+	}
+}

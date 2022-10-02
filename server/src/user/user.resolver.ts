@@ -17,6 +17,11 @@ export class UserResolver {
 		return await this.userService.getById(user.id)
 	}
 
+	@Query(() => [User])
+	async getAll() {
+		return this.userService.getAll()
+	}
+
 	@UseGuards(GqlAuthGuard)
 	@Query(() => Boolean)
 	async sendVerificationCode(@CurrentUser() user: User) {
@@ -25,10 +30,10 @@ export class UserResolver {
 
 	@UseGuards(GqlAuthGuard)
 	@Mutation(() => Boolean)
-	async veryfiEmail(
+	async verifyEmail(
 		@Args('data') input: VerifyEmailInput,
 		@CurrentUser() user: User
 	) {
-		return await this.userService.veryfiEmail(input, user.id)
+		return await this.userService.verifyEmail(input, user.id)
 	}
 }

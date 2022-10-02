@@ -4,6 +4,11 @@ import { IsNotEmpty, IsString } from 'class-validator'
 
 @ObjectType()
 export class SignResponse {
+	@Field()
+	@IsString()
+	@IsNotEmpty()
+	id: string
+
 	@IsString()
 	@IsNotEmpty()
 	@Field()
