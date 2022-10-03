@@ -13,9 +13,9 @@ input LoginInput {
 }
 
 type Mutation {
-  getNewTokens: SignResponse!
-  login(data: LoginInput!): SignResponse!
-  register(data: RegisterInput!): SignResponse!
+  getNewTokens: Boolean!
+  login(data: LoginInput!): Boolean!
+  register(data: RegisterInput!): Boolean!
   verifyEmail(data: VerifyEmailInput!): Boolean!
 }
 
@@ -31,12 +31,6 @@ input RegisterInput {
   lastName: String!
   password: String!
   username: String!
-}
-
-type SignResponse {
-  accessToken: String!
-  id: String!
-  user: UserInfoResponse!
 }
 
 type User {

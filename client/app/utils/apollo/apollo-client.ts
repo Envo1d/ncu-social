@@ -1,25 +1,58 @@
 import {
 	ApolloClient,
-	HttpLink,
+	ApolloLink,
 	InMemoryCache,
 	NormalizedCacheObject,
+	createHttpLink,
+	from,
+	makeVar,
 } from '@apollo/client'
-import { concatPagination } from '@apollo/client/utilities'
+import { setContext } from '@apollo/client/link/context'
+import { onError } from '@apollo/client/link/error'
+import { getCookie } from 'cookies-next'
 import merge from 'deepmerge'
 import isEqual from 'lodash/isEqual'
 import { useMemo } from 'react'
+
+import authenticatedVar from './authenticated'
 
 export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__'
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
+export const userRole = makeVar('')
+export const setUserRole = (role: string) => {
+	userRole(role)
+}
+
+const httpLink = createHttpLink({
+	uri: `${process.env.APP_API_URL}`,
+	credentials: process.env.APP_CREDENTIALS,
+})
+
+const authLink = setContext((_, { headers }) => {
+	const token = getCookie('accessToken')
+	return {
+		headers: {
+			...headers,
+			authorization: token ? `Bearer ${token}` : '',
+		},
+	}
+})
+
+const logoutLink = onError(({ graphQLErrors }) => {
+	if (
+		graphQLErrors?.length &&
+		(graphQLErrors[0].extensions?.response as any)?.statusCode === 401
+	) {
+		authenticatedVar(false)
+	}
+})
+
 const createApolloClient = () => {
 	return new ApolloClient({
 		ssrMode: typeof window === 'undefined',
-		link: new HttpLink({
-			uri: `${process.env.APP_API_URL}`,
-			credentials: process.env.APP_CREDENTIALS,
-		}),
+		link: from([logoutLink, authLink, httpLink]),
 		cache: new InMemoryCache(),
 		connectToDevTools: true,
 	})
@@ -56,4 +89,8 @@ export const useApollo = (pageProps: any) => {
 	const state = pageProps[APOLLO_STATE_PROP_NAME]
 	const store = useMemo(() => initializeApollo(state), [state])
 	return store
+}
+
+export const clearCache = () => {
+	apolloClient?.resetStore()
 }

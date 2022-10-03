@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client'
-import { Box, Button, Input, Paper, Stack, styled } from '@mui/material'
+import { Button, Grid, Input, Paper, Stack, styled } from '@mui/material'
 import Head from 'next/head'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 import React, { FC, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
@@ -13,6 +13,8 @@ import {
 	RegisterInput,
 	RegisterMutation,
 } from '@/schemes/schema-ts/graphql'
+
+import authenticatedVar from '@/utils/apollo/authenticated'
 
 import { validEmail } from '@/shared/regex'
 
@@ -35,6 +37,8 @@ const Item = styled(Paper)(({ theme }) => ({
 const Auth: FC = () => {
 	const [authType, setAuthType] = useState('Login')
 
+	const router = useRouter()
+
 	const handleButtonClick = () => {
 		setAuthType(authType === 'Login' ? 'Register' : 'Login')
 		reset()
@@ -49,13 +53,24 @@ const Auth: FC = () => {
 		mode: 'onChange',
 	})
 
-	const [
-		registerUser,
-		{ data: regData, error: regError, loading: regLoading },
-	] = useMutation<RegisterMutation>(REGISTER, { errorPolicy: 'all' })
+	const [registerUser, { error: regError }] = useMutation<RegisterMutation>(
+		REGISTER,
+		{
+			errorPolicy: 'all',
+			onCompleted: () => {
+				authenticatedVar(true)
+				router.push('/')
+			},
+		}
+	)
 
-	const [loginUser, { data: logData, error: logError, loading: logLoading }] =
-		useMutation<LoginMutation>(LOGIN, { errorPolicy: 'all' })
+	const [loginUser, { error: logError }] = useMutation<LoginMutation>(LOGIN, {
+		errorPolicy: 'all',
+		onCompleted: () => {
+			authenticatedVar(true)
+			router.push('/')
+		},
+	})
 
 	const onSubmitRegistration: SubmitHandler<RegisterInput> = (info) => {
 		registerUser({
@@ -73,14 +88,19 @@ const Auth: FC = () => {
 		})
 	}
 
-	if (regData || logData) Router.replace('/')
-
 	return (
 		<>
 			<Head>
 				<title>{authType}</title>
 			</Head>
-			<Box sx={{ flexGrow: 1, overflow: 'hidden', px: 3 }}>
+			<Grid
+				container
+				spacing={0}
+				direction="column"
+				alignItems="center"
+				justifyContent="center"
+				style={{ minHeight: '100vh' }}
+			>
 				<StyledPaper
 					sx={{
 						my: 1,
@@ -247,7 +267,7 @@ const Auth: FC = () => {
 						)}
 					</Stack>
 				</StyledPaper>
-			</Box>
+			</Grid>
 		</>
 	)
 }

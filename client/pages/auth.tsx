@@ -6,9 +6,6 @@ import Auth from '../app/components/screens/auth/Auth'
 const AuthPage: NextPage = () => {
 	return (
 		<>
-			<Head>
-				<title>Auth Page</title>
-			</Head>
 			<Auth />
 		</>
 	)

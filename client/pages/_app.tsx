@@ -1,8 +1,10 @@
-import { ApolloProvider, NormalizedCacheObject } from '@apollo/client'
+import { ApolloProvider } from '@apollo/client'
 import { CacheProvider, EmotionCache, ThemeProvider } from '@emotion/react'
 import { CssBaseline } from '@mui/material'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
+
+import Guard from '@/components/Guard'
 
 import { useApollo } from '@/utils/apollo/apollo-client'
 
@@ -24,7 +26,6 @@ export default function MyApp({
 	emotionCache = clientSideEmotionCache,
 }: CustomAppProps) {
 	const apolloClient = useApollo(pageProps)
-
 	return (
 		<ApolloProvider client={apolloClient}>
 			<CacheProvider value={emotionCache}>
@@ -33,7 +34,9 @@ export default function MyApp({
 				</Head>
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
-					<Component {...pageProps} />
+					<Guard excludedRoutes={['/auth']}>
+						<Component {...pageProps} />
+					</Guard>
 				</ThemeProvider>
 			</CacheProvider>
 		</ApolloProvider>

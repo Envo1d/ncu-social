@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { GqlContext } from './../types'
 import { Resolver, Mutation, Args, Context } from '@nestjs/graphql'
 import { AuthService } from './auth.service'
-import { RegisterInput, LoginInput, SignResponse } from './dto'
+import { RegisterInput, LoginInput } from './dto'
 
 @Resolver()
 export class AuthResolver {
@@ -12,17 +12,17 @@ export class AuthResolver {
 		private readonly config: ConfigService
 	) {}
 
-	@Mutation(() => SignResponse)
+	@Mutation(() => Boolean)
 	async register(
 		@Args('data') input: RegisterInput,
 		@Context() { res }: GqlContext
 	) {
 		const result = await this.authService.register(input)
-		const returnRes: SignResponse = {
-			id: result.user.id,
-			accessToken: result.accessToken,
-			user: result.user,
-		}
+		res.cookie('accessToken', result.accessToken, {
+			maxAge:
+				this.config.get<number>('ACCESS_TOKEN_EXPIRY_DURATION_NUM_MINUTES') *
+				60000,
+		})
 		res.cookie('refreshToken', result.refreshToken, {
 			maxAge:
 				this.config.get<number>('REFRESH_TOKEN_EXPIRY_DURATION_NUM_DAYS') *
@@ -32,18 +32,18 @@ export class AuthResolver {
 				1000,
 			httpOnly: true,
 		})
-		return returnRes
+		return true
 	}
 
-	@Mutation(() => SignResponse)
+	@Mutation(() => Boolean)
 	async getNewTokens(@Context() { req, res }: GqlContext) {
 		const refToken = req.cookies.refreshToken
 		const result = await this.authService.getNewTokens(refToken)
-		const returnRes: SignResponse = {
-			id: result.user.id,
-			accessToken: result.accessToken,
-			user: result.user,
-		}
+		res.cookie('accessToken', result.accessToken, {
+			maxAge:
+				this.config.get<number>('ACCESS_TOKEN_EXPIRY_DURATION_NUM_MINUTES') *
+				60000,
+		})
 		res.cookie('refreshToken', result.refreshToken, {
 			maxAge:
 				this.config.get<number>('REFRESH_TOKEN_EXPIRY_DURATION_NUM_DAYS') *
@@ -53,17 +53,17 @@ export class AuthResolver {
 				1000,
 			httpOnly: true,
 		})
-		return returnRes
+		return true
 	}
 
-	@Mutation(() => SignResponse)
+	@Mutation(() => Boolean)
 	async login(@Args('data') input: LoginInput, @Context() { res }: GqlContext) {
 		const result = await this.authService.login(input)
-		const returnRes: SignResponse = {
-			id: result.user.id,
-			accessToken: result.accessToken,
-			user: result.user,
-		}
+		res.cookie('accessToken', result.accessToken, {
+			maxAge:
+				this.config.get<number>('ACCESS_TOKEN_EXPIRY_DURATION_NUM_MINUTES') *
+				60000,
+		})
 		res.cookie('refreshToken', result.refreshToken, {
 			maxAge:
 				this.config.get<number>('REFRESH_TOKEN_EXPIRY_DURATION_NUM_DAYS') *
@@ -73,6 +73,6 @@ export class AuthResolver {
 				1000,
 			httpOnly: true,
 		})
-		return returnRes
+		return true
 	}
 }
