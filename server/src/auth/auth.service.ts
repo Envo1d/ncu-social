@@ -4,6 +4,7 @@ import { LoginInput } from './dto/login.input'
 import { PrismaService } from './../prisma/prisma.service'
 import {
 	BadRequestException,
+	ForbiddenException,
 	Injectable,
 	UnauthorizedException,
 } from '@nestjs/common'
@@ -51,7 +52,7 @@ export class AuthService {
 							'User with this email is already in the system'
 						)
 				}
-			}
+			} else console.log(e)
 		}
 	}
 
@@ -66,7 +67,7 @@ export class AuthService {
 	}
 
 	async getNewTokens(token: string): Promise<SignResult> {
-		if (!token) throw new UnauthorizedException('Please sign in!')
+		if (!token) throw new ForbiddenException('Could not refresh access token')
 		const result = await this.jwtService.verifyAsync(token, {
 			secret: this.config.get<string>('JWT_SECRET'),
 		})

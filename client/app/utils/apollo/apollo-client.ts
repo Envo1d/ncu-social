@@ -1,6 +1,5 @@
 import {
 	ApolloClient,
-	ApolloLink,
 	InMemoryCache,
 	NormalizedCacheObject,
 	createHttpLink,
@@ -14,16 +13,15 @@ import merge from 'deepmerge'
 import isEqual from 'lodash/isEqual'
 import { useMemo } from 'react'
 
+import * as REFRESH from '@/schemes/auth/Refresh.graphql'
+
+import refreshedVar from '@/utils/apollo/refreshed'
+
 import authenticatedVar from './authenticated'
 
 export const APOLLO_STATE_PROP_NAME = '__APOLLO_STATE__'
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
-
-export const userRole = makeVar('')
-export const setUserRole = (role: string) => {
-	userRole(role)
-}
 
 const httpLink = createHttpLink({
 	uri: `${process.env.APP_API_URL}`,
@@ -41,11 +39,19 @@ const authLink = setContext((_, { headers }) => {
 })
 
 const logoutLink = onError(({ graphQLErrors }) => {
-	if (
-		graphQLErrors?.length &&
-		(graphQLErrors[0].extensions?.response as any)?.statusCode === 401
-	) {
-		authenticatedVar(false)
+	if (graphQLErrors?.length) {
+		if ((graphQLErrors[0].extensions?.response as any)?.statusCode === 403) {
+			authenticatedVar(false)
+			refreshedVar(false)
+		}
+		if ((graphQLErrors[0].extensions?.response as any)?.statusCode === 401) {
+			const client = initializeApollo()
+			client.mutate({
+				mutation: REFRESH,
+				errorPolicy: 'all',
+			})
+			refreshedVar(true)
+		}
 	}
 })
 

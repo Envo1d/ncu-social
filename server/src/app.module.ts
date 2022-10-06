@@ -52,7 +52,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 					secure: true,
 				},
 				template: {
-					dir: join(process.cwd(), 'src/mails'),
+					dir: join(__dirname, 'templates'),
 					adapter: new HandlebarsAdapter(),
 					options: {
 						strict: true,

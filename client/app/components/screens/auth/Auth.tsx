@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/client'
 import { Button, Grid, Input, Paper, Stack, styled } from '@mui/material'
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { FC, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -14,6 +13,7 @@ import {
 	RegisterMutation,
 } from '@/schemes/schema-ts/graphql'
 
+import Meta from '@/utils/Meta'
 import authenticatedVar from '@/utils/apollo/authenticated'
 
 import { validEmail } from '@/shared/regex'
@@ -90,9 +90,7 @@ const Auth: FC = () => {
 
 	return (
 		<>
-			<Head>
-				<title>{authType}</title>
-			</Head>
+			<Meta title={authType} />
 			<Grid
 				container
 				spacing={0}

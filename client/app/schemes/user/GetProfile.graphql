@@ -1,0 +1,13 @@
+query Profile {
+	profile {
+		id
+		firstName
+		lastName
+		username
+		gender
+		country
+		avatarUrl
+		email
+		isVerified
+	}
+}

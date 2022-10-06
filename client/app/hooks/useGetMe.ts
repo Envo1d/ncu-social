@@ -1,14 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 
-const GET_ME = gql`
-	query me {
-		profile {
-			id
-			email
-			role
-		}
-	}
-`
+import * as GET_ME from '@/schemes/user/GetMe.graphql'
 
 const useGetMe = () => {
 	return useQuery(GET_ME, {

@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 
 import { clearCache } from '@/utils/apollo/apollo-client'
 import authenticatedVar from '@/utils/apollo/authenticated'
+import refreshedVar from '@/utils/apollo/refreshed'
+import userDataVar from '@/utils/apollo/user-data'
 
 import useGetMe from '@/hooks/useGetMe'
 
@@ -15,11 +17,23 @@ interface GuardProps {
 const Guard = ({ children, excludedRoutes }: GuardProps) => {
 	const { data: user, refetch } = useGetMe()
 	const authenticated = useReactiveVar(authenticatedVar)
+	const refreshed = useReactiveVar(refreshedVar)
 	const router = useRouter()
 
 	useEffect(() => {
-		if (!excludedRoutes?.includes(router.pathname)) refetch()
-	}, [router.pathname, refetch, excludedRoutes])
+		if (!excludedRoutes?.includes(router.pathname)) {
+			refetch()
+			userDataVar(user?.profile)
+		}
+	}, [router.pathname, refetch, excludedRoutes, user?.profile])
+
+	useEffect(() => {
+		if (refreshed) {
+			refreshedVar(false)
+			refetch()
+			userDataVar(user?.profile)
+		}
+	}, [refreshed, refetch, user?.profile])
 
 	useEffect(() => {
 		if (!authenticated && !excludedRoutes?.includes(router.pathname)) {
@@ -33,7 +47,19 @@ const Guard = ({ children, excludedRoutes }: GuardProps) => {
 			{excludedRoutes?.includes(router.pathname) ? (
 				children
 			) : (
-				<>{user && children}</>
+				<>
+					{router.pathname === '/admin' ? (
+						<>
+							{user && user.profile.role === 'ADMIN' ? (
+								children
+							) : (
+								<>NOT FOUND</>
+							)}
+						</>
+					) : (
+						<>{user && children}</>
+					)}
+				</>
 			)}
 		</>
 	)

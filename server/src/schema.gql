@@ -15,6 +15,7 @@ input LoginInput {
 type Mutation {
   getNewTokens: Boolean!
   login(data: LoginInput!): Boolean!
+  logout: Boolean!
   register(data: RegisterInput!): Boolean!
   verifyEmail(data: VerifyEmailInput!): Boolean!
 }

@@ -1,9 +1,10 @@
-import { SignResult } from './dto/sign.result'
 import { ConfigService } from '@nestjs/config'
 import { GqlContext } from './../types'
 import { Resolver, Mutation, Args, Context } from '@nestjs/graphql'
 import { AuthService } from './auth.service'
 import { RegisterInput, LoginInput } from './dto'
+import { Query } from '@nestjs/common'
+import { Auth } from './decorators'
 
 @Resolver()
 export class AuthResolver {
@@ -73,6 +74,14 @@ export class AuthResolver {
 				1000,
 			httpOnly: true,
 		})
+		return true
+	}
+
+	@Auth()
+	@Mutation(() => Boolean)
+	async logout(@Context() { res }: GqlContext) {
+		res.clearCookie('accessToken')
+		res.clearCookie('refreshToken')
 		return true
 	}
 }

@@ -47,7 +47,7 @@ export class UserService {
 			.sendMail({
 				to: email,
 				subject: 'Email confirmation',
-				template: 'verify',
+				template: './verify',
 				context: {
 					code,
 				},

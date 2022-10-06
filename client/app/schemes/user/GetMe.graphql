@@ -1,0 +1,8 @@
+query Me {
+	profile {
+		role
+		avatarUrl
+		isVerified
+		username
+	}
+}

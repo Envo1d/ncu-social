@@ -1,10 +1,10 @@
 import { ApolloProvider } from '@apollo/client'
 import { CacheProvider, EmotionCache, ThemeProvider } from '@emotion/react'
-import { CssBaseline } from '@mui/material'
 import type { AppProps } from 'next/app'
-import Head from 'next/head'
+import React from 'react'
 
 import Guard from '@/components/Guard'
+import Layout from '@/components/ui/layout/Layout'
 
 import { useApollo } from '@/utils/apollo/apollo-client'
 
@@ -24,18 +24,21 @@ export default function MyApp({
 	Component,
 	pageProps,
 	emotionCache = clientSideEmotionCache,
+	...appProps
 }: CustomAppProps) {
 	const apolloClient = useApollo(pageProps)
+	const isLayoutNotNeeded = ['/auth', '/verify'].includes(
+		appProps.router.pathname
+	)
+	const LayoutComponent = isLayoutNotNeeded ? React.Fragment : Layout
 	return (
 		<ApolloProvider client={apolloClient}>
 			<CacheProvider value={emotionCache}>
-				<Head>
-					<meta name="viewport" content="initial-scale=1, width=device-width" />
-				</Head>
 				<ThemeProvider theme={theme}>
-					<CssBaseline />
 					<Guard excludedRoutes={['/auth']}>
-						<Component {...pageProps} />
+						<LayoutComponent>
+							<Component {...pageProps} />
+						</LayoutComponent>
 					</Guard>
 				</ThemeProvider>
 			</CacheProvider>

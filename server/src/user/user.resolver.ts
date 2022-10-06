@@ -11,24 +11,25 @@ import { Auth } from 'src/auth/decorators'
 export class UserResolver {
 	constructor(private readonly userService: UserService) {}
 
-	@UseGuards(GqlAuthGuard)
+	@Auth()
 	@Query(() => User)
 	async profile(@CurrentUser() user: User) {
 		return await this.userService.getById(user.id)
 	}
 
+	@Auth('ADMIN')
 	@Query(() => [User])
 	async getAll() {
 		return this.userService.getAll()
 	}
 
-	@UseGuards(GqlAuthGuard)
+	@Auth()
 	@Query(() => Boolean)
 	async sendVerificationCode(@CurrentUser() user: User) {
 		return await this.userService.sendVerificationCode(user.email)
 	}
 
-	@UseGuards(GqlAuthGuard)
+	@Auth()
 	@Mutation(() => Boolean)
 	async verifyEmail(
 		@Args('data') input: VerifyEmailInput,
