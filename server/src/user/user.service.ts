@@ -29,6 +29,9 @@ export class UserService {
 			where: {
 				id,
 			},
+			include: {
+				posts: true,
+			},
 		})
 		if (!user) throw new NotFoundException('User not found!')
 

@@ -1,5 +1,6 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
 import { Role, Status } from '@prisma/client'
+import { Post } from '../../post/entities/post.entity'
 
 @ObjectType()
 export class User {
@@ -38,6 +39,12 @@ export class User {
 
 	@Field(() => String, { nullable: true })
 	gender?: string
+
+	@Field(() => [Post], { nullable: true })
+	posts?: [Post]
+
+	@Field(() => [Post], { nullable: true })
+	likes?: [Post]
 
 	@Field(() => Date, { name: 'registeredAt' })
 	createdAt: Date

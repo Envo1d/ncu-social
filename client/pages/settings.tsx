@@ -5,16 +5,16 @@ import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import React from 'react'
 
-import * as PROFILE from '@/schemes/user/GetProfile.graphql'
+import * as PROFILE from '@/schemes/user/GetProfileInfo.graphql'
 
 import Meta from '@/utils/Meta'
 
+//TODO change user info
 const SettingsPage: NextPage = () => {
 	const { data, error, loading } = useQuery(PROFILE)
 

@@ -77,6 +77,7 @@ export class AuthService {
 				id: result._id,
 			},
 		})
+		if (!user) throw new ForbiddenException('Could not refresh access token')
 		const tokens = await this.issueTokenPair(user.id)
 		return {
 			accessToken: tokens.accessToken,

@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module'
 import * as redisStore from 'cache-manager-ioredis'
 import { MailerModule } from '@nestjs-modules/mailer'
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter'
+import { PostModule } from './post/post.module'
 
 @Module({
 	imports: [
@@ -21,7 +22,8 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 			playground: false,
 			autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
 			sortSchema: true,
-			cors: { origin: true, credentials: true },
+			csrfPrevention: true,
+			cors: { origin: 'http://92.112.185.205:10000', credentials: true },
 			context: ({ req, res }) => ({ req, res }),
 		}),
 		CacheModule.registerAsync<ClientOpts>({
@@ -64,6 +66,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 		PrismaModule,
 		UserModule,
 		AuthModule,
+		PostModule,
 	],
 })
 export class AppModule {}

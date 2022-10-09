@@ -1,10 +1,8 @@
 import { VerifyEmailInput } from './dto'
-import { GqlAuthGuard } from './../auth/guards/gql.guard'
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { UserService } from './user.service'
 import { User } from './entities/user.entity'
 import { CurrentUser } from './decorators'
-import { UseGuards } from '@nestjs/common'
 import { Auth } from 'src/auth/decorators'
 
 @Resolver(() => User)

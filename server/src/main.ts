@@ -12,7 +12,7 @@ async function bootstrap() {
 	const port = config.get<number>('PORT') || 3000
 
 	app.use(cookieParser())
-	app.enableCors({ origin: true, credentials: true })
+	app.enableCors({ credentials: true, origin: true })
 
 	const prismaService = app.get(PrismaService)
 	await prismaService.enableShutdownHooks(app)

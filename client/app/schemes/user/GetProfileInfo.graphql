@@ -4,7 +4,10 @@ query Profile {
 		firstName
 		lastName
 		username
+		gender
+		country
 		avatarUrl
-		posts
+		email
+		isVerified
 	}
 }

@@ -23,17 +23,15 @@ const Guard = ({ children, excludedRoutes }: GuardProps) => {
 	useEffect(() => {
 		if (!excludedRoutes?.includes(router.pathname)) {
 			refetch()
-			userDataVar(user?.profile)
 		}
-	}, [router.pathname, refetch, excludedRoutes, user?.profile])
+	}, [router.pathname, refetch, excludedRoutes])
 
 	useEffect(() => {
-		if (refreshed) {
+		if (refreshed === true) {
 			refreshedVar(false)
 			refetch()
-			userDataVar(user?.profile)
 		}
-	}, [refreshed, refetch, user?.profile])
+	}, [refreshed, refetch])
 
 	useEffect(() => {
 		if (!authenticated && !excludedRoutes?.includes(router.pathname)) {
@@ -41,7 +39,7 @@ const Guard = ({ children, excludedRoutes }: GuardProps) => {
 			clearCache()
 		}
 	}, [authenticated, router, excludedRoutes])
-
+	userDataVar(user?.profile)
 	return (
 		<>
 			{excludedRoutes?.includes(router.pathname) ? (

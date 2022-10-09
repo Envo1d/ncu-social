@@ -3,7 +3,6 @@ import { GqlContext } from './../types'
 import { Resolver, Mutation, Args, Context } from '@nestjs/graphql'
 import { AuthService } from './auth.service'
 import { RegisterInput, LoginInput } from './dto'
-import { Query } from '@nestjs/common'
 import { Auth } from './decorators'
 
 @Resolver()

@@ -58,9 +58,10 @@ model Follows {
 }
 
 model Post {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(cuid())
   title      String
-  contentUrl String
+  contentUrl String?
+  text       String
   authorId   String
   author     User     @relation("author", fields: [authorId], references: [id])
   likedBy    User[]

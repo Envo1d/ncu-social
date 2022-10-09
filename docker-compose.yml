@@ -33,7 +33,18 @@ services:
       - postgres
       - redis
     env_file:
-      - ./server/docker.env
+      - ./server/.env
+  client:
+    container_name: client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - '10000:3000'
+    depends_on:
+      - nest-api
+    env_file:
+      - ./client/.env
 volumes:
   postgres:
     driver: local
@@ -41,3 +52,14 @@ volumes:
     driver: local
   nest-api:
     driver: local
+  client:
+    driver: local
+networks:
+  client:
+    driver: 'bridge'
+  nest-api:
+    driver: 'bridge'
+  postgres:
+    driver: 'local'
+  redis:
+    driver: 'local'
