@@ -2,10 +2,36 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Category {
+  createdAt: DateTime!
+  generalCategory: Category
+  generalCategoryId: String
+  id: ID!
+  product: Product
+  productId: String
+  title: String!
+  updatedAt: DateTime!
+}
+
+input CreateCategoryInput {
+  generalCategoryId: String!
+  title: String!
+}
+
+input CreateOrderInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 input CreatePostInput {
-  contentUrl: String!
+  content: Upload
   text: String!
   title: String!
+}
+
+input CreateProductInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
 """
@@ -13,18 +39,40 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+"""An arbitrary-precision Decimal type"""
+scalar Decimal
+
 input LoginInput {
   email: String!
   password: String!
 }
 
 type Mutation {
+  createCategory(data: CreateCategoryInput!): Boolean!
+  createOrder(createOrderInput: CreateOrderInput!): Order!
   createPost(data: CreatePostInput!): Post!
+  createProduct(createProductInput: CreateProductInput!): Product!
   getNewTokens: Boolean!
   login(data: LoginInput!): Boolean!
   logout: Boolean!
   register(data: RegisterInput!): Boolean!
+  removeCategory(id: String!): Boolean!
+  removeOrder(id: Int!): Order!
+  removeProduct(id: Int!): Product!
+  updateCategory(data: UpdateCategoryInput!): Boolean!
+  updateOrder(updateOrderInput: UpdateOrderInput!): Order!
+  updateProduct(updateProductInput: UpdateProductInput!): Product!
   verifyEmail(data: VerifyEmailInput!): Boolean!
+}
+
+type Order {
+  createdAt: DateTime!
+  customer: User!
+  id: ID!
+  products: [Product!]!
+  status: String!
+  totalPrice: Decimal!
+  updatedAt: DateTime!
 }
 
 type Post {
@@ -38,19 +86,61 @@ type Post {
   updatedAt: DateTime!
 }
 
+type Product {
+  amount: Int
+  categories: [Category!]!
+  createdAt: DateTime!
+  description: String!
+  id: ID!
+  imagesUrl: String!
+  orders: [Order!]
+  owner: User!
+  ownerId: String!
+  price: Decimal!
+  title: String!
+  totalAmount: Int!
+  updatedAt: DateTime!
+}
+
 type Query {
+  categories: [Category!]!
+  category(id: String!): Category!
   getAll: [User!]!
+  order(id: Int!): Order!
+  product(id: Int!): Product!
   profile: User!
   sendVerificationCode: Boolean!
 }
 
 input RegisterInput {
+  country: String!
   email: String!
   firstName: String!
   lastName: String!
   password: String!
   username: String!
 }
+
+input UpdateCategoryInput {
+  generalCategoryId: String
+  id: ID!
+  title: String!
+}
+
+input UpdateOrderInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateProductInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 type User {
   avatarUrl: String

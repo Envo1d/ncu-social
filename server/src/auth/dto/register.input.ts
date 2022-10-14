@@ -26,5 +26,10 @@ export class RegisterInput {
 	@Field(() => String)
 	@IsString()
 	@IsNotEmpty()
+	readonly country: string
+
+	@Field(() => String)
+	@IsString()
+	@IsNotEmpty()
 	readonly password: string
 }

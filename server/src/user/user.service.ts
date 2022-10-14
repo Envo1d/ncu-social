@@ -56,7 +56,7 @@ export class UserService {
 				},
 			})
 			.then(async () => {
-				await this.cache.set(user.id, code, { ttl: 3600 })
+				await this.cache.set(user.id, code, 3600)
 			})
 			.catch(() => {
 				return false

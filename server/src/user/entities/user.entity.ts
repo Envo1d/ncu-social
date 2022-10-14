@@ -1,5 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { Role, Status } from '@prisma/client'
+import { Role, UserStatus } from '@prisma/client'
 import { Post } from '../../post/entities/post.entity'
 
 @ObjectType()
@@ -32,7 +32,7 @@ export class User {
 	role: Role
 
 	@Field(() => String)
-	status: Status
+	status: UserStatus
 
 	@Field(() => String, { nullable: true })
 	avatarUrl?: string

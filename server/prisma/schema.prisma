@@ -16,10 +16,17 @@ enum Role {
   USER
 }
 
-enum Status {
+enum UserStatus {
   OFFLINE
   ONLINE
   BANNED
+}
+
+enum OrderStatus {
+  NEW_ORDER
+  PROCESSED
+  CONFIRMED
+  DONE
 }
 
 // Social Network
@@ -33,9 +40,11 @@ model User {
   isVerified    Boolean        @default(false)
   passwordHash  String
   role          Role           @default(USER)
-  status        Status         @default(OFFLINE)
+  status        UserStatus     @default(OFFLINE)
   avatarUrl     String?
-  country       String?
+  country       String
+  region        String?
+  city          String?
   gender        String?
   followers     Follows[]      @relation("follower")
   following     Follows[]      @relation("following")
@@ -44,6 +53,7 @@ model User {
   conversations Conversation[]
   messages      Message[]
   products      Product[]
+  orders        Order[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -90,23 +100,23 @@ model Message {
   updatedAt      DateTime     @updatedAt
 }
 
-// model Complaint {
-//   id           String   @id @default(cuid())
-//   violation    String
-//   contentUrl   String?
-//   userUrl      String?
-//   appellantUrl String
-//   createdAt    DateTime @default(now())
-//   updatedAt    DateTime @updatedAt
-// }
+model Complaint {
+  id           String   @id @default(cuid())
+  violation    String
+  contentUrl   String?
+  userUrl      String?
+  appellantUrl String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
 
 // Marketplace
 
 model Category {
   id                String     @id @default(cuid())
-  title             String
-  generalCategoryId String
-  generalCategory   Category   @relation("subcategories", fields: [generalCategoryId], references: [id])
+  title             String     @unique
+  generalCategoryId String?
+  generalCategory   Category?  @relation("subcategories", fields: [generalCategoryId], references: [id])
   subcategories     Category[] @relation("subcategories")
   productId         String?
   product           Product?   @relation(fields: [productId], references: [id])
@@ -116,13 +126,27 @@ model Category {
 
 model Product {
   id          String     @id @default(cuid())
+  imagesUrl   String
   title       String
   description String
   owner       User       @relation(fields: [ownerId], references: [id])
   ownerId     String
   categories  Category[]
-  price       Float
-  amount      Int
+  orders      Order[]
+  price       Decimal    @db.Money
+  amount      Int?
+  totalAmount Int
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+}
+
+model Order {
+  id         String      @id @default(cuid())
+  products   Product[]
+  totalPrice Decimal     @db.Money
+  status     OrderStatus @default(NEW_ORDER)
+  customerId String
+  customer   User        @relation(fields: [customerId], references: [id])
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 }
