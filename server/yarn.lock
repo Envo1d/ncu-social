@@ -6119,11 +6119,6 @@ preview-email@3.0.5:
     pug "^3.0.2"
     uuid "^8.3.2"
 
-prisma-graphql-type-decimal@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/prisma-graphql-type-decimal/-/prisma-graphql-type-decimal-2.0.4.tgz#be33afd57b234b55bce438fe736c894365bc2aea"
-  integrity sha512-HjqDYqpBF8T6XztkYVemcEit+XywoygQPUvM7Cowvd9ExkUz8ofZaTlIkY0Rw7kVOdz4btZhMsj/v/6Bitnn0w==
-
 prisma@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/prisma/-/prisma-4.4.0.tgz#0c53324bf6a29474636b3e1964e0d72e0277bf8f"

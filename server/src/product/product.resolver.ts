@@ -1,35 +1,49 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { ProductService } from './product.service';
-import { Product } from './entities/product.entity';
-import { CreateProductInput } from './dto/create-product.input';
-import { UpdateProductInput } from './dto/update-product.input';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import { ProductService } from './product.service'
+import { Product } from './entities/product.entity'
+import { CreateProductInput } from './dto/create-product.input'
+import { UpdateProductInput } from './dto/update-product.input'
+import { Auth } from '../auth/decorators'
+import { CurrentUser } from '../user/decorators'
+import { User } from '../user/entities/user.entity'
 
 @Resolver(() => Product)
 export class ProductResolver {
-  constructor(private readonly productService: ProductService) {}
+	constructor(private readonly productService: ProductService) {}
 
-  @Mutation(() => Product)
-  createProduct(@Args('createProductInput') createProductInput: CreateProductInput) {
-    return this.productService.create(createProductInput);
-  }
+	@Auth()
+	@Mutation(() => Boolean)
+	async createProduct(
+		@Args('data') input: CreateProductInput,
+		@CurrentUser() user: User
+	) {
+		return await this.productService.create(input, user.id)
+	}
 
-  @Query(() => [Product], { name: 'product' })
-  findAll() {
-    return this.productService.findAll();
-  }
+	@Auth()
+	@Query(() => [Product], { name: 'products' })
+	async findAll() {
+		return await this.productService.findAll()
+	}
 
-  @Query(() => Product, { name: 'product' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.productService.findOne(id);
-  }
+	@Auth()
+	@Query(() => Product, { name: 'product' })
+	async findOne(@Args('id', { type: () => String }) id: string) {
+		return await this.productService.findOne(id)
+	}
 
-  @Mutation(() => Product)
-  updateProduct(@Args('updateProductInput') updateProductInput: UpdateProductInput) {
-    return this.productService.update(updateProductInput.id, updateProductInput);
-  }
+	@Auth()
+	@Mutation(() => Product)
+	async updateProduct(@Args('data') updateProductInput: UpdateProductInput) {
+		return await this.productService.update(
+			updateProductInput.id,
+			updateProductInput
+		)
+	}
 
-  @Mutation(() => Product)
-  removeProduct(@Args('id', { type: () => Int }) id: number) {
-    return this.productService.remove(id);
-  }
+	@Auth()
+	@Mutation(() => Product)
+	async removeProduct(@Args('id', { type: () => String }) id: string) {
+		return await this.productService.remove(id)
+	}
 }

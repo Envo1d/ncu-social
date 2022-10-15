@@ -1,8 +1,5 @@
 import { Product } from './../../product/entities/product.entity'
-import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { Decimal } from '@prisma/client/runtime'
-import { GraphQLDecimal, transformToDecimal } from 'prisma-graphql-type-decimal'
-import { Transform, Type } from 'class-transformer'
+import { ObjectType, Field, ID, Float } from '@nestjs/graphql'
 import { OrderStatus } from '@prisma/client'
 import { User } from '../../user/entities/user.entity'
 
@@ -14,10 +11,8 @@ export class Order {
 	@Field(() => [Product])
 	products: Product[]
 
-	@Field(() => GraphQLDecimal)
-	@Type(() => Object)
-	@Transform(transformToDecimal)
-	totalPrice: Decimal
+	@Field(() => Float)
+	totalPrice: number
 
 	@Field(() => String)
 	status: OrderStatus

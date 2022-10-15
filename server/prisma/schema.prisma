@@ -118,8 +118,7 @@ model Category {
   generalCategoryId String?
   generalCategory   Category?  @relation("subcategories", fields: [generalCategoryId], references: [id])
   subcategories     Category[] @relation("subcategories")
-  productId         String?
-  product           Product?   @relation(fields: [productId], references: [id])
+  products          Product[]
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 }

@@ -15,11 +15,11 @@ export class Category {
 	@Field(() => Category, { nullable: true })
 	generalCategory?: Category
 
-	@Field(() => String, { nullable: true })
-	productId?: string
+	@Field(() => [Category], { nullable: true })
+	subcategories?: Category[]
 
-	@Field(() => Product, { nullable: true })
-	product?: Product
+	@Field(() => [Product], { nullable: true })
+	products?: Product[]
 
 	@Field(() => Date)
 	createdAt: Date

@@ -43,6 +43,8 @@ export class CategoryService {
 		return await this.prisma.category.findMany({
 			include: {
 				generalCategory: true,
+				subcategories: true,
+				products: true,
 			},
 		})
 	}
@@ -62,19 +64,30 @@ export class CategoryService {
 			},
 		})
 		if (!category) throw new BadRequestException('Category not exist')
-		await this.prisma.category.update({
-			where: {
-				id,
-			},
-			data: {
-				title: input.title,
-				generalCategory: {
-					connect: {
-						id: input?.id,
+		if (input.generalCategoryId !== '') {
+			await this.prisma.category.update({
+				where: {
+					id,
+				},
+				data: {
+					title: input.title,
+					generalCategory: {
+						connect: {
+							id: input?.generalCategoryId,
+						},
 					},
 				},
-			},
-		})
+			})
+		} else {
+			await this.prisma.category.update({
+				where: {
+					id,
+				},
+				data: {
+					title: input.title,
+				},
+			})
+		}
 		return true
 	}
 

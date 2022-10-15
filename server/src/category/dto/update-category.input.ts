@@ -14,6 +14,6 @@ export class UpdateCategoryInput {
 	readonly title: string
 
 	@IsString()
-	@Field(() => String, { nullable: true })
+	@Field(() => String)
 	readonly generalCategoryId?: string
 }
