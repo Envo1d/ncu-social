@@ -1,19 +1,11 @@
-import { InputType, Field, ID } from '@nestjs/graphql'
+import { InputType, Field, ID, PartialType } from '@nestjs/graphql'
 import { IsNotEmpty, IsString } from 'class-validator'
+import { CreateCategoryInput } from './create-category.input'
 
 @InputType()
-export class UpdateCategoryInput {
+export class UpdateCategoryInput extends PartialType(CreateCategoryInput) {
 	@IsString()
 	@IsNotEmpty()
 	@Field(() => ID)
 	readonly id: string
-
-	@IsString()
-	@IsNotEmpty()
-	@Field(() => String)
-	readonly title: string
-
-	@IsString()
-	@Field(() => String)
-	readonly generalCategoryId?: string
 }

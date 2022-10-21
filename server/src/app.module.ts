@@ -14,7 +14,7 @@ import { PostModule } from './post/post.module'
 import { CategoryModule } from './category/category.module'
 import { ProductModule } from './product/product.module'
 import { OrderModule } from './order/order.module'
-import { AdminModule } from './admin/admin.module';
+import { CountryModule } from './country/country.module';
 
 @Module({
 	imports: [
@@ -74,7 +74,7 @@ import { AdminModule } from './admin/admin.module';
 		CategoryModule,
 		ProductModule,
 		OrderModule,
-		AdminModule,
+		CountryModule,
 	],
 })
 export class AppModule {}

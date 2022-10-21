@@ -1,5 +1,6 @@
-import { InputType, Int, Field } from '@nestjs/graphql'
-import { IsNotEmpty, IsString } from 'class-validator'
+import { InputType, Field } from '@nestjs/graphql'
+import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator'
+import { CategoryPartInput } from './category.part.input'
 
 @InputType()
 export class CreateCategoryInput {
@@ -8,7 +9,8 @@ export class CreateCategoryInput {
 	@Field(() => String)
 	readonly title: string
 
-	@IsString()
-	@Field(() => String)
-	readonly generalCategoryId: string
+	@IsObject()
+	@IsOptional()
+	@Field(() => CategoryPartInput, { nullable: true })
+	readonly general: CategoryPartInput
 }

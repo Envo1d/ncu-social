@@ -19,10 +19,11 @@ export class ProductService {
 				title: input.title,
 				description: input.description,
 				categories: {
-					connect: JSON.parse(input.categoriesId),
+					connect: input.categories.map((category) => ({
+						id: category.categoryId,
+					})),
 				},
 				price: input.price,
-				totalAmount: input.totalAmount,
 				owner: {
 					connect: {
 						id: userId,
@@ -37,9 +38,9 @@ export class ProductService {
 	async findAll() {
 		return await this.prisma.product.findMany({
 			include: {
-				orders: true,
 				categories: true,
 				owner: true,
+				productOrder: true,
 			},
 		})
 	}
@@ -50,32 +51,33 @@ export class ProductService {
 				id,
 			},
 			include: {
-				orders: true,
 				categories: true,
 				owner: true,
+				productOrder: true,
 			},
 		})
 	}
 
-	async update(id: string, input: UpdateProductInput) {
+	async update(input: UpdateProductInput) {
 		const product = await this.prisma.product.findUnique({
 			where: {
-				id,
+				id: input.id,
 			},
 		})
 		if (!product) throw new BadRequestException('Product not exist')
 		await this.prisma.product.update({
 			where: {
-				id,
+				id: input.id,
 			},
 			data: {
 				title: input.title,
 				description: input.description,
 				categories: {
-					connect: JSON.parse(input.categoriesId),
+					connect: input.categories.map((category) => ({
+						id: category.categoryId,
+					})),
 				},
 				price: input.price,
-				totalAmount: input.totalAmount,
 				imagesUrl: '',
 			},
 		})

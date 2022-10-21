@@ -13,14 +13,26 @@ type Category {
   updatedAt: DateTime!
 }
 
+input CategoryPartInput {
+  categoryId: String!
+}
+
+type Country {
+  id: ID!
+  title: String!
+}
+
 input CreateCategoryInput {
-  generalCategoryId: String!
+  general: CategoryPartInput
+  title: String!
+}
+
+input CreateCountryInput {
   title: String!
 }
 
 input CreateOrderInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  productsInfo: [OrderPartInput!]!
 }
 
 input CreatePostInput {
@@ -30,11 +42,10 @@ input CreatePostInput {
 }
 
 input CreateProductInput {
-  categoriesId: String!
+  categories: [CategoryPartInput!]!
   description: String!
   price: Float!
   title: String!
-  totalAmount: Int!
 }
 
 """
@@ -49,7 +60,8 @@ input LoginInput {
 
 type Mutation {
   createCategory(data: CreateCategoryInput!): Boolean!
-  createOrder(createOrderInput: CreateOrderInput!): Order!
+  createCountry(data: CreateCountryInput!): Boolean!
+  createOrder(data: CreateOrderInput!): Order!
   createPost(data: CreatePostInput!): Post!
   createProduct(data: CreateProductInput!): Boolean!
   getNewTokens: Boolean!
@@ -57,10 +69,12 @@ type Mutation {
   logout: Boolean!
   register(data: RegisterInput!): Boolean!
   removeCategory(id: String!): Boolean!
-  removeOrder(id: Int!): Order!
+  removeCountry(id: String!): Boolean!
+  removeOrder(id: String!): Boolean!
   removeProduct(id: String!): Product!
   updateCategory(data: UpdateCategoryInput!): Boolean!
-  updateOrder(updateOrderInput: UpdateOrderInput!): Order!
+  updateCountry(data: UpdateCountryInput!): Boolean!
+  updateOrder(data: UpdateOrderInput!): Boolean!
   updateProduct(data: UpdateProductInput!): Product!
   verifyEmail(data: VerifyEmailInput!): Boolean!
 }
@@ -69,10 +83,14 @@ type Order {
   createdAt: DateTime!
   customer: User!
   id: ID!
-  products: [Product!]!
+  products: [ProductOrder!]!
   status: String!
-  totalPrice: Float!
   updatedAt: DateTime!
+}
+
+input OrderPartInput {
+  amount: Int!
+  productId: String!
 }
 
 type Post {
@@ -87,26 +105,38 @@ type Post {
 }
 
 type Product {
-  amount: Int
   categories: [Category!]!
   createdAt: DateTime!
   description: String!
   id: ID!
   imagesUrl: String!
-  orders: [Order!]
+  orders: [ProductOrder!]
   owner: User!
   ownerId: String!
   price: Float!
   title: String!
-  totalAmount: Int!
+  updatedAt: DateTime!
+}
+
+type ProductOrder {
+  createdAt: DateTime!
+  id: ID!
+  order: Order!
+  orderId: String!
+  product: Product!
+  productId: String!
+  quantity: Int!
   updatedAt: DateTime!
 }
 
 type Query {
   categories: [Category!]!
   category(id: String!): Category!
+  countries: [Country!]!
+  country(id: String!): Country!
   getAll: [User!]!
-  order(id: Int!): Order!
+  order(id: String!): Order!
+  orders: [Order!]!
   product(id: String!): Product!
   products: [Product!]!
   profile: User!
@@ -114,7 +144,7 @@ type Query {
 }
 
 input RegisterInput {
-  country: String!
+  countryId: String!
   email: String!
   firstName: String!
   lastName: String!
@@ -123,24 +153,27 @@ input RegisterInput {
 }
 
 input UpdateCategoryInput {
-  generalCategoryId: String!
+  general: CategoryPartInput
   id: ID!
-  title: String!
+  title: String
+}
+
+input UpdateCountryInput {
+  id: ID!
+  title: String
 }
 
 input UpdateOrderInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  id: ID!
+  productsInfo: [OrderPartInput!]!
 }
 
 input UpdateProductInput {
-  categoriesId: String
+  categories: [CategoryPartInput!]
   description: String
   id: ID!
   price: Float
   title: String
-  totalAmount: Int
 }
 
 """The `Upload` scalar type represents a file upload."""

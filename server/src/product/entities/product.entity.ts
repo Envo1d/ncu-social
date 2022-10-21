@@ -1,7 +1,7 @@
-import { Order } from './../../order/entities/order.entity'
-import { Category } from './../../category/entities/category.entity'
-import { ObjectType, Field, ID, Int, Float } from '@nestjs/graphql'
-import { User } from '../../user/entities/user.entity'
+import { Category } from 'category/entities/category.entity'
+import { ObjectType, Field, ID, Float } from '@nestjs/graphql'
+import { User } from 'user/entities/user.entity'
+import { ProductOrder } from 'order/entities'
 
 @ObjectType()
 export class Product {
@@ -26,17 +26,11 @@ export class Product {
 	@Field(() => [Category])
 	categories: Category[]
 
-	@Field(() => [Order], { nullable: true })
-	orders?: Order[]
+	@Field(() => [ProductOrder], { nullable: true })
+	orders?: ProductOrder[]
 
 	@Field(() => Float)
 	price: number
-
-	@Field(() => Int, { nullable: true })
-	amount?: number
-
-	@Field(() => Int)
-	totalAmount: number
 
 	@Field(() => Date)
 	createdAt: Date

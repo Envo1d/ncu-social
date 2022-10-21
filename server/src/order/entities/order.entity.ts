@@ -1,18 +1,15 @@
-import { Product } from './../../product/entities/product.entity'
-import { ObjectType, Field, ID, Float } from '@nestjs/graphql'
+import { ObjectType, Field, ID } from '@nestjs/graphql'
 import { OrderStatus } from '@prisma/client'
 import { User } from '../../user/entities/user.entity'
+import { ProductOrder } from '.'
 
 @ObjectType()
 export class Order {
 	@Field(() => ID)
 	id: string
 
-	@Field(() => [Product])
-	products: Product[]
-
-	@Field(() => Float)
-	totalPrice: number
+	@Field(() => [ProductOrder])
+	products: ProductOrder[]
 
 	@Field(() => String)
 	status: OrderStatus

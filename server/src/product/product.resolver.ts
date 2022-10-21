@@ -35,10 +35,7 @@ export class ProductResolver {
 	@Auth()
 	@Mutation(() => Product)
 	async updateProduct(@Args('data') updateProductInput: UpdateProductInput) {
-		return await this.productService.update(
-			updateProductInput.id,
-			updateProductInput
-		)
+		return await this.productService.update(updateProductInput)
 	}
 
 	@Auth()

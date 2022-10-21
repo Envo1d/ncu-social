@@ -10,13 +10,13 @@ export class CategoryService {
 
 	async create(input: CreateCategoryInput) {
 		try {
-			if (input.generalCategoryId !== '') {
+			if (input.general !== null) {
 				await this.prisma.category.create({
 					data: {
 						title: input.title,
 						generalCategory: {
 							connect: {
-								id: input?.generalCategoryId,
+								id: input?.general.categoryId,
 							},
 						},
 					},
@@ -64,7 +64,7 @@ export class CategoryService {
 			},
 		})
 		if (!category) throw new BadRequestException('Category not exist')
-		if (input.generalCategoryId !== '') {
+		if (input.general.categoryId !== null) {
 			await this.prisma.category.update({
 				where: {
 					id,
@@ -73,7 +73,7 @@ export class CategoryService {
 					title: input.title,
 					generalCategory: {
 						connect: {
-							id: input?.generalCategoryId,
+							id: input?.general.categoryId,
 						},
 					},
 				},

@@ -1,5 +1,6 @@
-import { InputType, Field, Int, Float } from '@nestjs/graphql'
-import { IsJSON, IsNotEmpty, IsNumber, IsString } from 'class-validator'
+import { InputType, Field, Float } from '@nestjs/graphql'
+import { IsArray, IsNotEmpty, IsString } from 'class-validator'
+import { CategoryPartInput } from './../../category/dto'
 
 @InputType()
 export class CreateProductInput {
@@ -13,17 +14,12 @@ export class CreateProductInput {
 	@Field(() => String)
 	readonly description: string
 
-	@IsJSON()
+	@IsArray()
 	@IsNotEmpty()
-	@Field(() => String)
-	readonly categoriesId: string
+	@Field(() => [CategoryPartInput])
+	readonly categories: CategoryPartInput[]
 
 	@IsNotEmpty()
 	@Field(() => Float)
 	readonly price: number
-
-	@IsNotEmpty()
-	@IsNumber()
-	@Field(() => Int)
-	readonly totalAmount: number
 }

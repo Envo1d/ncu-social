@@ -3,7 +3,7 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { UserService } from './user.service'
 import { User } from './entities/user.entity'
 import { CurrentUser } from './decorators'
-import { Auth } from 'src/auth/decorators'
+import { Auth } from 'auth/decorators'
 
 @Resolver(() => User)
 export class UserResolver {

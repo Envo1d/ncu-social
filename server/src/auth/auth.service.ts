@@ -31,7 +31,11 @@ export class AuthService {
 					firstName: input.firstName,
 					lastName: input.lastName,
 					passwordHash: passHash,
-					country: input.country,
+					country: {
+						connect: {
+							id: input.countryId,
+						},
+					},
 				},
 			})
 

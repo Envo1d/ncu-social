@@ -42,7 +42,8 @@ model User {
   role          Role           @default(USER)
   status        UserStatus     @default(OFFLINE)
   avatarUrl     String?
-  country       String
+  countryId     String
+  country       Country        @relation(fields: [countryId], references: [id])
   region        String?
   city          String?
   gender        String?
@@ -56,6 +57,12 @@ model User {
   orders        Order[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+}
+
+model Country {
+  id    String @id @default(cuid())
+  title String @unique
+  user  User[]
 }
 
 model Follows {
@@ -124,28 +131,36 @@ model Category {
 }
 
 model Product {
-  id          String     @id @default(cuid())
-  imagesUrl   String
-  title       String
-  description String
-  owner       User       @relation(fields: [ownerId], references: [id])
-  ownerId     String
-  categories  Category[]
-  orders      Order[]
-  price       Decimal    @db.Money
-  amount      Int?
-  totalAmount Int
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id           String         @id @default(cuid())
+  imagesUrl    String
+  title        String
+  description  String
+  owner        User           @relation(fields: [ownerId], references: [id])
+  ownerId      String
+  categories   Category[]
+  productOrder ProductOrder[]
+  price        Decimal        @db.Money
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 model Order {
-  id         String      @id @default(cuid())
-  products   Product[]
-  totalPrice Decimal     @db.Money
-  status     OrderStatus @default(NEW_ORDER)
+  id         String         @id @default(cuid())
+  products   ProductOrder[]
+  status     OrderStatus    @default(NEW_ORDER)
   customerId String
-  customer   User        @relation(fields: [customerId], references: [id])
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  customer   User           @relation(fields: [customerId], references: [id])
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model ProductOrder {
+  id        String   @id @default(cuid())
+  product   Product  @relation(fields: [productId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId String
+  orderId   String
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
