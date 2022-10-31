@@ -1,4 +1,4 @@
-query Profile {
+query ProfileInfo {
 	profile {
 		id
 		firstName
@@ -9,5 +9,6 @@ query Profile {
 		avatarUrl
 		email
 		isVerified
+		role
 	}
 }

@@ -1,0 +1,174 @@
+.container
+	display: flex
+	justify-content: center
+	align-items: center
+	min-height: 100vh
+	background: var(--color-light)
+	color: var(--color-black)
+
+@mixin gradient($direction, $list...)
+	background: -webkit-linear-gradient($direction, $list)
+	background: -moz-linear-gradient($direction, $list)
+	background: -o-linear-gradient($direction, $list)
+	background: linear-gradient($direction, $list)
+
+.box
+	position: relative
+	width: 380px
+	height: 26.5rem
+	background: var(--color-black)
+	border-radius: 8px
+	overflow: hidden
+
+	&:before
+		content: ''
+		position: absolute
+		top: -50%
+		left: -50%
+		width: 380px
+		height: 26.5rem
+		@include gradient(0deg,transparent, var(--color-primary), var(--color-primary))
+		transform-origin: bottom right
+		animation: animate 6s linear infinite
+
+	&:after
+		content: ''
+		position: absolute
+		top: -50%
+		left: -50%
+		width: 380px
+		height: 26.5rem
+		@include gradient(0deg,transparent, var(--color-primary), var(--color-primary))
+		transform-origin: bottom right
+		animation: animate 6s linear infinite
+		animation-delay: -3s
+
+	&.register
+		height: 47rem
+		&::after
+			height: 47rem
+		&::before
+			height: 47rem
+
+@keyframes animate
+	0%
+		transform: rotate(0deg)
+
+	100%
+		transform: rotate(360deg)
+
+.form
+	position: absolute
+	inset: 2px
+	border-radius: 5px
+	background: var(--color-white)
+	z-index: 10
+	padding: 50px 40px
+	display: flex
+	flex-direction: column
+
+	& h2
+		color: var(--color-primary)
+		font-weight: 500
+		text-align: center
+		letter-spacing: 0.1em
+		pointer-events: none
+
+	& input[type='submit']
+		border: none
+		outline: none
+		margin-top: 1rem
+		font-weight: 600
+		cursor: pointer
+
+	& select
+		border: none
+		outline: none
+		margin-top: 1rem
+		font-weight: 600
+		cursor: pointer
+
+.inputBox
+	position: relative
+	width: 300px
+	margin-top: 35px
+
+	& select
+		position: relative
+		width: 100%
+		padding: 10px 0 10px 5px
+		background: transparent
+		color: var(--color-dark)
+		font-size: 1em
+		letter-spacing: 0.08em
+		z-index: 10
+		display: inline-block
+		appearance: none
+		-webkit-appearance: none
+		-moz-appearance: none
+		-ms-appearance: none
+		option
+			background: var(--color-light)
+			color: inherit
+			cursor: pointer
+
+	& input
+		position: relative
+		width: 100%
+		padding: 20px 10px 10px
+		background: transparent
+		border: none
+		outline: none
+		color: var(--color-dark)
+		font-size: 1em
+		letter-spacing: 0.08em
+		z-index: 10
+
+	& span
+		position: absolute
+		left: 0
+		padding: 20px 0 10px
+		font-size: 1em
+		color: var(--color-primary)
+		pointer-events: none
+		letter-spacing: 0.05em
+		transition: 0.5s
+
+	& i
+		position: absolute
+		left: 0
+		bottom: 0
+		width: 100%
+		height: 2px
+		background: var(--color-primary)
+		border-radius: 4px
+		pointer-events: none
+
+.inputBox input:valid ~ span,
+.inputBox input:focus ~ span,
+.inputBox select:focus ~ span,
+.inputBox select:valid ~ span
+	color: var(--color-primary)
+	transform: translateY(-34px)
+	font-size: 0.75em
+
+.inputBox input:invalid:focus ~ span,
+.inputBox select:invalid:focus ~ span
+	color: var(--color-danger)
+	transform: translateY(-34px)
+	font-size: 0.75em
+
+.links
+	display: flex
+	justify-content: flex-end
+
+	& span
+		margin: 10px 0
+		font-size: 0.75rem
+		color: var(--color-primary)
+		cursor: pointer
+		transition: all ease 300ms
+		opacity: 1
+
+	& span:hover
+		opacity: 0.95

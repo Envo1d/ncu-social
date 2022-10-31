@@ -1,14 +1,16 @@
 import type { NextPage } from 'next'
-import Link from 'next/link'
+
+import Home from '@/components/screens/home/Home'
 
 import Meta from '@/utils/Meta'
 
-const Home: NextPage = () => {
+const HomePage: NextPage = () => {
 	return (
 		<>
 			<Meta title="Main Page" />
+			<Home />
 		</>
 	)
 }
 
-export default Home
+export default HomePage

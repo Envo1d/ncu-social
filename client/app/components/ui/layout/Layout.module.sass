@@ -1,0 +1,151 @@
+.header
+    width: 100%
+    background: var(--color-white)
+    padding: 0.7rem 0
+    position: fixed
+    top: 0
+    z-index: 10
+    :global(.container)
+        display: flex
+        align-items: center
+        justify-content: space-between
+    :global(.search-bar)
+        margin-left: -2.7rem
+    & input[type="search"]::placeholder
+        color: var(--color-gray)
+.logo
+    & a
+        color: var(--color-dark)
+
+.profile_icon
+    display: block
+    align-items: center
+    gap: 2rem
+    cursor: pointer
+
+.dropdown_menu
+    position: absolute
+    background: var(--color-light)
+    margin-top: 0.78rem
+    width: max-content
+    margin-left: -3rem
+    flex-direction: column
+    list-style: none
+    line-height: 40px
+    border-radius: 0 0 8px 8px
+    box-shadow: 0 0.2rem 0.3rem var(--color-primary)
+    transition: opacity 300ms ease, transform 10ms ease
+    transform: translateY(-250px)
+    display: flex
+    opacity: 0
+    &.active
+        opacity: 1
+        transform: translate(0)
+
+.sub_item
+    cursor: pointer
+    padding-right: 1.3rem
+    display: flex
+    transition: all 300ms ease
+    & i
+        margin-left: 1rem
+    & p
+        margin-left: 0.8rem
+    & a
+        margin-left: 0.8rem
+        color: var(--color-dark)
+    &:hover
+        background: var(--color-white)
+        color: var(--color-primary)
+    &:last-child:hover
+        background: var(--color-white)
+        border-radius: 0 0 8px 8px
+
+.active
+    text-decoration: none
+
+.customize_theme
+    background: rgba(255, 255, 255, 0.5)
+    width: 100vw
+    height: 100vh
+    position: fixed
+    top: 0
+    left: 0
+    z-index: 100
+    text-align: center
+    display: grid
+    place-items: center
+    font-size: 0.9rem
+    display: none
+    &.active
+        display: grid
+
+.card
+    background: var(--color-white)
+    padding: 3rem
+    border-radius: var(--card-border-radius)
+    width: 50%
+    box-shadow: 0 0 1rem var(--color-primary)
+
+.color
+    margin-top: 2rem
+
+.choose_color
+    background: var(--color-light)
+    padding: var(--search-padding)
+    border-radius: var(--card-border-radius)
+    display: flex
+    align-items: center
+    justify-content: space-between
+    & span
+        width: 2.2rem
+        height: 2.2rem
+        border-radius: 50%
+        cursor: pointer
+        &:nth-child(1)
+            background: hsl(252, 75%, 60%)
+        &:nth-child(2)
+            background: hsl(52, 75%, 60%)
+        &:nth-child(3)
+            background: hsl(352, 75%, 60%)
+        &:nth-child(4)
+            background: hsl(152, 75%, 60%)
+        &:nth-child(5)
+            background: hsl(202, 75%, 60%)
+        &.active
+            border: 5px solid var(--color-secondary)
+
+.background
+    margin-top: 2rem
+
+.choose_bg
+    display: flex
+    align-items: center
+    justify-content: space-between
+    gap: 1.5rem
+    & div
+        padding: var(--card-padding)
+        width: 100%
+        display: flex
+        align-items: center
+        font-size: 1rem
+        font-weight: bold
+        border-radius: 0.4rem
+        cursor: pointer
+        &.active
+            border: 2px solid var(--color-primary)
+        &:nth-child(1)
+            background: white
+            color: black
+        &:nth-child(2)
+            background: hsl(252, 30%, 17%)
+            color: white
+        &:nth-child(3)
+            background: hsl(252, 30%, 10%)
+            color: white
+        & span
+            width: 2rem
+            height: 2rem
+            border: 2px solid var(--color-gray)
+            border-radius: 50%
+            margin-right: 1rem

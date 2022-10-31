@@ -46,7 +46,7 @@ model User {
   country       Country        @relation(fields: [countryId], references: [id])
   region        String?
   city          String?
-  gender        String?
+  phone_number  String?
   followers     Follows[]      @relation("follower")
   following     Follows[]      @relation("following")
   posts         Post[]         @relation("author")

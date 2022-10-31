@@ -1,245 +1,217 @@
 import { useReactiveVar } from '@apollo/client'
-import {
-	AdminPanelSettings,
-	Logout,
-	Mail,
-	People,
-	Settings,
-} from '@mui/icons-material'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
-import MenuIcon from '@mui/icons-material/Menu'
-import {
-	Avatar,
-	Box,
-	CssBaseline,
-	Divider,
-	IconButton,
-	List,
-	ListItem,
-	ListItemButton,
-	ListItemIcon,
-	ListItemText,
-	AppBarProps as MuiAppBarProps,
-	Toolbar,
-	Typography,
-} from '@mui/material'
-import MuiAppBar from '@mui/material/AppBar'
-import MuiDrawer from '@mui/material/Drawer'
-import { CSSObject, Theme, styled, useTheme } from '@mui/material/styles'
+import { useTheme } from 'next-themes'
+import Image from 'next/image'
 import Link from 'next/link'
-import React, { FC, PropsWithChildren, useState } from 'react'
+import React, { FC, PropsWithChildren, useEffect, useState } from 'react'
 
 import userDataVar from '@/utils/apollo/user-data'
 
-const drawerWidth = 240
+import useComponentVisible from '@/hooks/useComponentVisible'
 
-const openedMixin = (theme: Theme): CSSObject => ({
-	width: drawerWidth,
-	transition: theme.transitions.create('width', {
-		easing: theme.transitions.easing.sharp,
-		duration: theme.transitions.duration.enteringScreen,
-	}),
-	overflowX: 'hidden',
-})
-
-const closedMixin = (theme: Theme): CSSObject => ({
-	transition: theme.transitions.create('width', {
-		easing: theme.transitions.easing.sharp,
-		duration: theme.transitions.duration.leavingScreen,
-	}),
-	overflowX: 'hidden',
-	width: `calc(${theme.spacing(7)} + 1px)`,
-	[theme.breakpoints.up('sm')]: {
-		width: `calc(${theme.spacing(8)} + 1px)`,
-	},
-})
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'flex-end',
-	padding: theme.spacing(0, 1),
-	...theme.mixins.toolbar,
-}))
-
-interface AppBarProps extends MuiAppBarProps {
-	open?: boolean
-}
-
-const AppBar = styled(MuiAppBar, {
-	shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open }) => ({
-	zIndex: theme.zIndex.drawer + 1,
-	transition: theme.transitions.create(['width', 'margin'], {
-		easing: theme.transitions.easing.sharp,
-		duration: theme.transitions.duration.leavingScreen,
-	}),
-	...(open && {
-		marginLeft: drawerWidth,
-		width: `calc(100% - ${drawerWidth}px)`,
-		transition: theme.transitions.create(['width', 'margin'], {
-			easing: theme.transitions.easing.sharp,
-			duration: theme.transitions.duration.enteringScreen,
-		}),
-	}),
-}))
-
-const Drawer = styled(MuiDrawer, {
-	shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-	width: drawerWidth,
-	flexShrink: 0,
-	whiteSpace: 'nowrap',
-	boxSizing: 'border-box',
-	...(open && {
-		...openedMixin(theme),
-		'& .MuiDrawer-paper': openedMixin(theme),
-	}),
-	...(!open && {
-		...closedMixin(theme),
-		'& .MuiDrawer-paper': closedMixin(theme),
-	}),
-}))
+import styles from './Layout.module.sass'
 
 const Layout: FC<PropsWithChildren<unknown>> = ({ children }) => {
-	const theme = useTheme()
-	const [open, setOpen] = useState(false)
+	const [mounted, setMounted] = useState(false)
+	const { theme, setTheme } = useTheme()
+	const {
+		ref: menuRef,
+		isComponentVisible: isMenuVisible,
+		setIsComponentVisible: setIsMenuVisible,
+	} = useComponentVisible(false)
+	const {
+		ref: themeRef,
+		isComponentVisible: isThemeVisible,
+		setIsComponentVisible: setIsThemeVisible,
+	} = useComponentVisible(false)
+
+	const changeBg = (bg: string) => {
+		if (bg === 'light') {
+			if (!theme?.includes('-')) changeTheme('light')
+			else changeTheme('light', theme?.substring(theme?.indexOf('-') + 1))
+		} else if (bg === 'dim') {
+			if (!theme?.includes('-')) changeTheme('dim')
+			else changeTheme('dim', theme?.substring(theme?.indexOf('-') + 1))
+		} else {
+			if (!theme?.includes('-')) changeTheme('dark')
+			else changeTheme('dark', theme?.substring(theme?.indexOf('-') + 1))
+		}
+	}
+
+	const changeColor = (color: string) => {
+		if (color === 'default') {
+			if (!theme?.includes('-')) changeTheme(theme)
+			else changeTheme(theme?.substring(0, theme?.indexOf('-')))
+		} else if (color === 'yellow') {
+			if (!theme?.includes('-')) changeTheme(theme, 'yellow')
+			else changeTheme(theme?.substring(0, theme?.indexOf('-')), 'yellow')
+		} else if (color === 'red') {
+			if (!theme?.includes('-')) changeTheme(theme, 'red')
+			else changeTheme(theme?.substring(0, theme?.indexOf('-')), 'red')
+		} else if (color === 'green') {
+			if (!theme?.includes('-')) changeTheme(theme, 'green')
+			else changeTheme(theme?.substring(0, theme?.indexOf('-')), 'green')
+		} else {
+			if (!theme?.includes('-')) changeTheme(theme, 'blue')
+			else changeTheme(theme?.substring(0, theme?.indexOf('-')), 'blue')
+		}
+	}
+
+	const changeTheme = (bg: string = '', color: string = '') => {
+		setTheme(`${bg}${color !== '' ? '-' + color : ''}`)
+	}
+
 	const userData = useReactiveVar(userDataVar)
 
-	const handleDrawerOpen = () => {
-		setOpen(true)
+	useEffect(() => {
+		setMounted(true)
+	}, [])
+
+	if (!mounted) {
+		return null
 	}
 
-	const handleDrawerClose = () => {
-		setOpen(false)
-	}
 	return (
-		<Box sx={{ display: 'flex' }}>
-			<CssBaseline />
-			<AppBar position="fixed" open={open}>
-				<Toolbar>
-					<IconButton
-						color="inherit"
-						aria-label="open drawer"
-						onClick={handleDrawerOpen}
-						edge="start"
-						sx={{
-							marginRight: 5,
-							...(open && { display: 'none' }),
-						}}
+		<>
+			<div className={styles.header}>
+				<div className="container">
+					<h2 className={styles.logo}>
+						<Link href="/">NCU</Link>
+					</h2>
+					<div className="search-bar">
+						<i className="uil uil-search"></i>
+						<input type="search" placeholder="Search" />
+					</div>
+					<div
+						className={styles.profile_icon}
+						onClick={() => setIsMenuVisible(true)}
+						ref={menuRef}
 					>
-						<MenuIcon />
-					</IconButton>
-					<Typography variant="h6" noWrap component="div">
-						NCU
-					</Typography>
-				</Toolbar>
-			</AppBar>
-			<Drawer variant="permanent" open={open}>
-				<DrawerHeader>
-					<IconButton onClick={handleDrawerClose}>
-						{theme.direction === 'rtl' ? (
-							<ChevronRightIcon />
-						) : (
-							<ChevronLeftIcon />
-						)}
-					</IconButton>
-				</DrawerHeader>
-				<List>
-					{['Profile', 'Friends', 'Messages', 'Settings'].map((text) => (
-						<ListItem key={text} disablePadding sx={{ display: 'block' }}>
-							<Link href={`/${text.toLowerCase()}`}>
-								<ListItemButton
-									sx={{
-										minHeight: 48,
-										justifyContent: open ? 'initial' : 'center',
-										px: 2.5,
-									}}
-								>
-									<ListItemIcon
-										sx={{
-											minWidth: 0,
-											mr: open ? 3 : 'auto',
-											justifyContent: 'center',
-										}}
-									>
-										{text === 'Profile' ? (
-											<Avatar alt="avatar" src={userData?.avatarUrl}>
-												{userData?.username.charAt(0)}
-											</Avatar>
-										) : text === 'Friends' ? (
-											<People />
-										) : text === 'Messages' ? (
-											<Mail />
-										) : (
-											text === 'Settings' && <Settings />
-										)}
-									</ListItemIcon>
-									<ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-								</ListItemButton>
-							</Link>
-						</ListItem>
-					))}
-					<ListItem disablePadding sx={{ display: 'block' }}>
-						<Link href="/logout">
-							<ListItemButton
-								sx={{
-									minHeight: 48,
-									justifyContent: open ? 'initial' : 'center',
-									px: 2.5,
+						<div className="profile-photo sub-btn">
+							<img
+								src="https://avatars.githubusercontent.com/u/79973093?v=4"
+								alt="avatar"
+							/>
+						</div>
+						<ul
+							className={`${styles.dropdown_menu} ${
+								isMenuVisible && styles.active
+							}`}
+						>
+							<li
+								className={styles.sub_item}
+								onClick={() => {
+									setIsThemeVisible(true)
+									setIsMenuVisible(false)
 								}}
 							>
-								<ListItemIcon
-									sx={{
-										minWidth: 0,
-										mr: open ? 3 : 'auto',
-										justifyContent: 'center',
-									}}
-								>
-									<Logout />
-								</ListItemIcon>
-								<ListItemText primary="Logout" sx={{ opacity: open ? 1 : 0 }} />
-							</ListItemButton>
-						</Link>
-					</ListItem>
-					{userData?.role === 'ADMIN' && (
-						<>
-							<Divider />
-							<ListItem disablePadding sx={{ display: 'block' }}>
-								<Link href="/admin">
-									<ListItemButton
-										sx={{
-											minHeight: 48,
-											justifyContent: open ? 'initial' : 'center',
-											px: 2.5,
-										}}
-									>
-										<ListItemIcon
-											sx={{
-												minWidth: 0,
-												mr: open ? 3 : 'auto',
-												justifyContent: 'center',
-											}}
-										>
-											<AdminPanelSettings />
-										</ListItemIcon>
-										<ListItemText
-											primary="Admin Panel"
-											sx={{ opacity: open ? 1 : 0 }}
-										/>
-									</ListItemButton>
-								</Link>
-							</ListItem>
-						</>
-					)}
-				</List>
-			</Drawer>
-			<Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-				<DrawerHeader />
-				{children}
-			</Box>
-		</Box>
+								<span>
+									<i className="uil uil-palette"></i>
+								</span>
+								<p>Theme</p>
+							</li>
+							{userData.role === 'ADMIN' && (
+								<li className={styles.sub_item}>
+									<span>
+										<i className="uil uil-shield-check"></i>
+									</span>
+									<Link href="/admin">Admin Panel</Link>
+								</li>
+							)}
+							<li className={styles.sub_item}>
+								<span>
+									<i className="uil uil-setting"></i>
+								</span>
+								<Link href="/settings">Settings</Link>
+							</li>
+							<li className={styles.sub_item}>
+								<span>
+									<i className="uil uil-sign-out-alt"></i>
+								</span>
+								<Link href="/logout">Logout</Link>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<>{children}</>
+			<div
+				className={`${styles.customize_theme} ${
+					isThemeVisible && styles.active
+				}`}
+			>
+				<div className={styles.card} ref={themeRef}>
+					<h2>Customize your view</h2>
+					<p className="text-muted">
+						Manage your font size, color, and background
+					</p>
+
+					<div className={styles.color}>
+						<h4>Color</h4>
+						<div className={styles.choose_color}>
+							<span
+								className={`color-1 ${!theme?.includes('-') && styles.active}`}
+								onClick={() => changeColor('default')}
+							></span>
+							<span
+								className={`color-2 ${
+									theme?.includes('yellow') && styles.active
+								}`}
+								onClick={() => changeColor('yellow')}
+							></span>
+							<span
+								className={`color-3 ${theme?.includes('red') && styles.active}`}
+								onClick={() => changeColor('red')}
+							></span>
+							<span
+								className={`color-4 ${
+									theme?.includes('green') && styles.active
+								}`}
+								onClick={() => changeColor('green')}
+							></span>
+							<span
+								className={`color-5 ${
+									theme?.includes('blue') && styles.active
+								}`}
+								onClick={() => changeColor('blue')}
+							></span>
+						</div>
+					</div>
+
+					<div className={styles.background}>
+						<h4>Background</h4>
+						<div className={styles.choose_bg}>
+							<div
+								className={`bg-1 ${theme?.includes('light') && styles.active}`}
+								onClick={() => {
+									changeBg('light')
+								}}
+							>
+								<span></span>
+								<h5>Light</h5>
+							</div>
+							<div
+								className={`bg-2 ${theme?.includes('dim') && styles.active}`}
+								onClick={() => {
+									changeBg('dim')
+								}}
+							>
+								<span></span>
+								<h5>Dim</h5>
+							</div>
+							<div
+								className={`bg-3 ${theme?.includes('dark') && styles.active}`}
+								onClick={() => {
+									changeBg('dark')
+								}}
+							>
+								<span></span>
+								<h5>Dark</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</>
 	)
 }
 

@@ -1,22 +1,12 @@
 import { useMutation } from '@apollo/client'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import {
-	Avatar,
-	Box,
-	Button,
-	Container,
-	Grid,
-	Link,
-	TextField,
-	Typography,
-} from '@mui/material'
 import { useRouter } from 'next/router'
 import React, { FC, useState } from 'react'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { SubmitHandler, useForm } from 'react-hook-form'
 
 import * as LOGIN from '@/schemes/auth/Login.graphql'
 import * as REGISTER from '@/schemes/auth/Register.graphql'
 import {
+	Country,
 	LoginInput,
 	LoginMutation,
 	RegisterInput,
@@ -25,29 +15,21 @@ import {
 
 import Meta from '@/utils/Meta'
 import authenticatedVar from '@/utils/apollo/authenticated'
+import { validMessage } from '@/utils/string/form-message'
 
 import { validEmail } from '@/shared/regex'
 
-function Copyright(props: any) {
-	return (
-		<Typography
-			variant="body2"
-			color="text.secondary"
-			align="center"
-			{...props}
-		>
-			{'Copyright © '}
-			<Link color="inherit" href="http://localhost:3000">
-				NCU
-			</Link>{' '}
-			{new Date().getFullYear()}
-			{'.'}
-		</Typography>
-	)
-}
+import useGetCountries from '@/hooks/useGetCountries'
+
+import styles from './Auth.module.sass'
 
 const Auth: FC = () => {
 	const [authType, setAuthType] = useState('Sign In')
+	const [country, setCountry] = useState('')
+
+	const selectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		setCountry(event.target.value)
+	}
 
 	const router = useRouter()
 
@@ -56,10 +38,12 @@ const Auth: FC = () => {
 		reset()
 	}
 
+	const { data } = useGetCountries()
+
 	const {
-		control,
 		handleSubmit,
 		formState: { errors },
+		register,
 		reset,
 	} = useForm<RegisterInput>({
 		mode: 'onChange',
@@ -103,180 +87,176 @@ const Auth: FC = () => {
 	return (
 		<>
 			<Meta title={authType} />
-			<Container component="main" maxWidth="xs">
-				<Box
-					sx={{
-						marginTop: 8,
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center',
-					}}
+			<div className={styles.container}>
+				<div
+					className={`${styles.box} ${
+						authType === 'Sign Up' && styles.register
+					}`}
 				>
-					<Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-						<LockOutlinedIcon />
-					</Avatar>
-					<Typography component="h1" variant="h5">
-						{authType}
-					</Typography>
-					<Box
-						component="form"
+					<form
+						className={styles.form}
 						onSubmit={
 							authType === 'Sign In'
 								? handleSubmit(onSubmitLogin)
 								: handleSubmit(onSubmitRegistration)
 						}
-						sx={{ mt: 3 }}
 					>
-						<Grid container spacing={2}>
-							{authType !== 'Sign In' && (
-								<>
-									<Grid item xs={12} sm={6}>
-										<Controller
-											name="firstName"
-											control={control}
-											defaultValue=""
-											rules={{
-												required: true,
-											}}
-											render={({ field: { ref, ...field } }) => (
-												<TextField
-													{...field}
-													inputRef={ref}
-													error={errors.firstName !== undefined}
-													autoComplete="given-name"
-													required
-													fullWidth
-													id="firstName"
-													label="First Name"
-													autoFocus
-												/>
-											)}
-										/>
-									</Grid>
-									<Grid item xs={12} sm={6}>
-										<Controller
-											name="lastName"
-											control={control}
-											defaultValue=""
-											rules={{
-												required: true,
-											}}
-											render={({ field: { ref, ...field } }) => (
-												<TextField
-													{...field}
-													inputRef={ref}
-													error={errors.lastName !== undefined}
-													required
-													fullWidth
-													id="lastName"
-													label="Last Name"
-													autoComplete="family-name"
-												/>
-											)}
-										/>
-									</Grid>
-									<Grid item xs={12}>
-										<Controller
-											name="username"
-											control={control}
-											defaultValue=""
-											rules={{
-												required: true,
-											}}
-											render={({ field: { ref, ...field } }) => (
-												<TextField
-													{...field}
-													inputRef={ref}
-													error={errors.username !== undefined}
-													required
-													fullWidth
-													id="username"
-													label="Username"
-												/>
-											)}
-										/>
-									</Grid>
-								</>
-							)}
-							<Grid item xs={12}>
-								<Controller
-									name="email"
-									control={control}
-									defaultValue=""
-									rules={{
-										required: true,
-										pattern: {
-											value: validEmail,
-											message: 'Please enter valid email',
-										},
-									}}
-									render={({ field: { ref, ...field } }) => (
-										<TextField
-											{...field}
-											inputRef={ref}
-											error={errors.email !== undefined}
-											required
-											fullWidth
-											id="email"
-											label="Email Address"
-											autoComplete="email"
-										/>
-									)}
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<Controller
-									name="password"
-									control={control}
-									defaultValue=""
-									rules={{
-										required: true,
-										minLength: 6,
-									}}
-									render={({ field: { ref, ...field } }) => (
-										<TextField
-											{...field}
-											inputRef={ref}
-											error={errors.password !== undefined}
-											required
-											fullWidth
-											label="Password"
-											type="password"
-											id="password"
-											autoComplete="new-password"
-										/>
-									)}
-								/>
-							</Grid>
-						</Grid>
-						<Button
+						<h2>{authType}</h2>
+						{authType === 'Sign Up' && (
+							<>
+								<div className={styles.inputBox}>
+									<input
+										type="text"
+										required
+										{...register('firstName', {
+											required: {
+												value: true,
+												message: validMessage.required('First Name'),
+											},
+											minLength: {
+												value: 3,
+												message: validMessage.minLenght('First Name', 3),
+											},
+										})}
+									/>
+									<span>
+										{errors?.firstName?.message
+											? errors?.firstName.message
+											: 'First Name'}
+									</span>
+									<i></i>
+								</div>
+								<div className={styles.inputBox}>
+									<input
+										type="text"
+										required
+										{...register('lastName', {
+											required: {
+												value: true,
+												message: validMessage.required('Last Name'),
+											},
+											minLength: {
+												value: 3,
+												message: validMessage.minLenght('Last Name', 3),
+											},
+										})}
+									/>
+									<span>
+										{errors?.lastName?.message
+											? errors?.lastName.message
+											: 'Last Name'}
+									</span>
+									<i></i>
+								</div>
+								<div className={styles.inputBox}>
+									<input
+										type="text"
+										required
+										{...register('username', {
+											required: {
+												value: true,
+												message: validMessage.required('Username'),
+											},
+											minLength: {
+												value: 3,
+												message: validMessage.minLenght('Username', 3),
+											},
+										})}
+									/>
+									<span>
+										{errors?.username?.message
+											? errors?.username?.message
+											: 'Username'}
+									</span>
+									<i></i>
+								</div>
+								<div className={styles.inputBox}>
+									<select
+										required
+										value={country}
+										{...register('countryId', {
+											required: {
+												value: true,
+												message: validMessage.required('Country'),
+											},
+											onChange: selectChange,
+										})}
+									>
+										<option disabled></option>
+										{data?.countries?.map((country: Country) => (
+											<option key={country.id} value={country.id}>
+												{country.title}
+											</option>
+										))}
+									</select>
+									<span>
+										{errors?.countryId?.message
+											? errors?.countryId.message
+											: 'Country'}
+									</span>
+									<i></i>
+								</div>
+							</>
+						)}
+						<div className={styles.inputBox}>
+							<input
+								type="email"
+								required
+								{...register('email', {
+									required: {
+										value: true,
+										message: validMessage.required('Email'),
+									},
+									pattern: {
+										value: validEmail,
+										message: validMessage.valid('Email'),
+									},
+								})}
+							/>
+							<span>
+								{errors?.email?.message ? errors?.email?.message : 'Email'}
+							</span>
+							<i></i>
+						</div>
+						<div className={styles.inputBox}>
+							<input
+								type="password"
+								required
+								{...register('password', {
+									required: {
+										value: true,
+										message: validMessage.required('Password'),
+									},
+									minLength: {
+										value: 6,
+										message: validMessage.minLenght('Password', 6),
+									},
+									maxLength: {
+										value: 20,
+										message: validMessage.maxLenght('Password', 20),
+									},
+								})}
+							/>
+							<span>
+								{errors?.password?.message
+									? errors?.password?.message
+									: 'Password'}
+							</span>
+							<i></i>
+						</div>
+						<div className={styles.links}>
+							<span onClick={() => handleClick()}>
+								{authType === 'Sign In' ? 'Sign Up' : 'Sign In'}
+							</span>
+						</div>
+						<input
 							type="submit"
-							fullWidth
-							variant="contained"
-							sx={{ mt: 3, mb: 2 }}
-						>
-							{authType}
-						</Button>
-						<Grid container justifyContent="flex-end">
-							<Grid item>
-								<Link
-									href="#"
-									variant="body2"
-									onClick={(e) => {
-										e.preventDefault()
-										handleClick()
-									}}
-								>
-									{authType === 'Sign In'
-										? "Don't have an account yet? Sign Up"
-										: 'Already have an account? Sign In'}
-								</Link>
-							</Grid>
-						</Grid>
-					</Box>
-				</Box>
-				<Copyright sx={{ mt: 5 }} />
-			</Container>
+							value={authType === 'Sign In' ? 'Login' : 'Register'}
+							className="btn btn-primary"
+						/>
+					</form>
+				</div>
+			</div>
 		</>
 	)
 }

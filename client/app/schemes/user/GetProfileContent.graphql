@@ -5,6 +5,12 @@ query Profile {
 		lastName
 		username
 		avatarUrl
-		posts
+		posts {
+			title
+			text
+		}
+		likes {
+			title
+		}
 	}
 }
